@@ -1,0 +1,13 @@
+{
+  "name": "trello-api",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "ndyudevmernstack",
+  "main": "src/server.js",
+  "author": "ndyudev",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
