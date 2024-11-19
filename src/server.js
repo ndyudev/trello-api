@@ -1,33 +1,57 @@
-/**
- * Updated by trungquandev.com's author on August 17 2023
- * YouTube: https://youtube.com/@trungquandev
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
+/* eslint-disable no-console */
 
 import express from 'express'
-import { mapOrder } from '~/utils/sorts.js'
+import { CONNECT_DB, GET_DB } from '~/config/mongodb'
 
-const app = express()
+const START_SERVER = async () => {
+  const app = express()
 
-const hostname = 'localhost'
-const port = 8017
+  const hostname = 'localhost'
+  const port = 8017
 
-app.get('/', (req, res) => {
-  // Test Absolute import mapOrder
-  // eslint-disable-next-line no-console
-  console.log(mapOrder(
-    [{ id: 'id-1', name: 'One' },
-      { id: 'id-2', name: 'Two' },
-      { id: 'id-3', name: 'Three' },
-      { id: 'id-4', name: 'Four' },
-      { id: 'id-5', name: 'Five' }],
-    ['id-5', 'id-4', 'id-2', 'id-3', 'id-1'],
-    'id'
-  ))
-  res.end('<h1>Hello World!</h1><hr>')
-})
+  // Sử dụng try...catch để bắt lỗi khi khởi tạo server
+  try {
+    console.log('1.Connecting to MongoDB Cloud Atlas...')
 
-app.listen(port, hostname, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Hello nDyuDev, I'm running server at http://${ hostname }:${ port }/`)
-})
+    // Kết nối tới MongoDB
+    await CONNECT_DB()
+    console.log('2.Connected to MongoDB Cloud Atlas!')
+
+    // Lấy database sau khi kết nối thành công
+    const db = GET_DB()
+    console.info('Successfully connected to the database:', db.databaseName)
+
+    app.get('/', async (req, res) => {
+      try {
+        // Lấy danh sách collections trong database và log ra
+        console.log(await db.listCollections().toArray())
+        res.end('<h1>Hello World!</h1><hr>')
+      } catch (err) {
+        console.error('Error fetching collections:', err.message)
+        res.status(500).send('Internal Server Error')
+      }
+    })
+
+    app.listen(port, hostname, () => {
+      console.log(`3.Hi nDyuDev , Back-End Server MERN Stack is running successfully at Host: ${hostname} and PORT: ${port}`)
+    })
+  } catch (error) {
+    console.error('Failed to start the server:', error.message)
+    process.exit(1) // Thoát tiến trình nếu xảy ra lỗi
+  }
+}
+
+// Cách làm cũ đã comment lại bên dưới để tham khảo
+/*
+console.log('1.Connecting to MongoDB Cloud Atlas...')
+CONNECT_DB()
+  .then(() => console.log('2.Connected to MongoDB Cloud Atlas!'))
+  .then(() => START_SERVER())
+  .catch(error => {
+    console.log(error)
+    process.exit(0)
+  })
+*/
+
+// Cách mới sử dụng try...catch để xử lý lỗi khi gọi hàm START_SERVER
+START_SERVER()
