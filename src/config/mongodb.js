@@ -23,19 +23,24 @@ const mongoClientInstance = new MongoClient(MONGODB_URI, {
  * Hàm CONNECT_DB dùng để kết nối tới MongoDB Atlas
  * Sau khi kết nối thành công, nó sẽ lưu database vào `trelloDatabaseInstance`
  */
+// Đóng kết nối đến Database
 export const CONNECT_DB = async () => {
+// Gọi kết nối tới MongoDB Atlas với URI đã khai báo trong thân của MôngClientInstance
   await mongoClientInstance.connect()
+  // Kết nối thành công thì lấy ra Database theo tên và gán ngược nó lại vào biến trelloDatabaseInstance ở trên của chúng ta
   trelloDatabaseInstance = mongoClientInstance.db(DATABASE_NAME)
 }
 
+// Dong ket noi toi DataBase khi can
+export const CLOSE_DB = async () => {
+  await mongoClientInstance.close()
+}
 
 /**
  * Hàm GET_DB không async, dùng để lấy ra instance của database
  * Đảm bảo hàm này chỉ được gọi sau khi CONNECT_DB đã thực thi
  */
 export const GET_DB = () => {
-  if (!trelloDatabaseInstance) {
-    throw new Error('Must connect to the database first!')
-  }
+  if (!trelloDatabaseInstance) throw new Error('Must connect to the database first!')
   return trelloDatabaseInstance
 }
