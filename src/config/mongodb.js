@@ -1,8 +1,6 @@
 import { MongoClient, ServerApiVersion } from 'mongodb'
 import { env } from '~/config/environment'
 
-/* eslint-disable no-console */
-
 // Khởi tạo một đối tượng TrelloDataBaseInstance ban đầu là null (vì chúng ta chưa connect)
 let trelloDatabaseInstance = null
 

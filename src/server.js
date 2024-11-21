@@ -1,16 +1,14 @@
-/* eslint-disable no-console */
 
 import express from 'express'
 import exitHook from 'async-exit-hook'
 import { CONNECT_DB, CLOSE_DB } from '~/config/mongodb'
 import { env } from '~/config/environment'
+import { APIs_v1 } from '~/routes/v1/index'
 
 const START_SERVER = async () => {
   const app = express()
 
-  app.get('/', async (req, res) => {
-    res.end('<h1>Hello World!</h1><hr>')
-  })
+  app.use('/v1', APIs_v1)
 
   app.listen(env.APP_PORT, env.APP_HOST, () => {
     console.log(`3.Hi ${env.AUTHOR} , Back-End Server MERN Stack is running successfully at Host: ${env.APP_HOST} and PORT: ${env.APP_PORT}`
@@ -40,14 +38,3 @@ const START_SERVER = async () => {
   }
 })()
 
-// Cách làm cũ đã comment lại bên dưới để tham khảo
-/*
-console.log('1.Connecting to MongoDB Cloud Atlas...')
-CONNECT_DB()
-  .then(() => console.log('2.Connected to MongoDB Cloud Atlas!'))
-  .then(() => START_SERVER())
-  .catch(error => {
-    console.log(error)
-    process.exit(0)
-  })
-*/
