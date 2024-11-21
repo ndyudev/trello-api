@@ -1,15 +1,13 @@
 import { MongoClient, ServerApiVersion } from 'mongodb'
+import { env } from '~/config/environment'
 
-const MONGODB_URI =
-  'mongodb+srv://ndyudev:ia4t1sZkFL3eQay2@trello-ndyudev.nsw6d.mongodb.net/?retryWrites=true&w=majority&appName=Trello-nDyuDev'
-
-const DATABASE_NAME = 'trello-ndyudev-mern-stack-pro'
+/* eslint-disable no-console */
 
 // Khởi tạo một đối tượng TrelloDataBaseInstance ban đầu là null (vì chúng ta chưa connect)
 let trelloDatabaseInstance = null
 
 // Khởi tạo một đối tượng mongoClientInstance để connect tới MongoDB
-const mongoClientInstance = new MongoClient(MONGODB_URI, {
+const mongoClientInstance = new MongoClient(env.MONGODB_URI, {
   // Lưu ý: ServerAPI có từ phiên bản MongoDB 5.0.0 trở lên
   // Có thể không cần dùng nếu không cần chỉ định phiên bản Stable API
   serverApi: {
@@ -23,15 +21,23 @@ const mongoClientInstance = new MongoClient(MONGODB_URI, {
  * Hàm CONNECT_DB dùng để kết nối tới MongoDB Atlas
  * Sau khi kết nối thành công, nó sẽ lưu database vào `trelloDatabaseInstance`
  */
-// Đóng kết nối đến Database
 export const CONNECT_DB = async () => {
-// Gọi kết nối tới MongoDB Atlas với URI đã khai báo trong thân của MôngClientInstance
-  await mongoClientInstance.connect()
-  // Kết nối thành công thì lấy ra Database theo tên và gán ngược nó lại vào biến trelloDatabaseInstance ở trên của chúng ta
-  trelloDatabaseInstance = mongoClientInstance.db(DATABASE_NAME)
+  try {
+    console.log('Attempting to connect to MongoDB...')
+    // Gọi kết nối tới MongoDB Atlas với URI đã khai báo trong thân của mongoClientInstance
+    await mongoClientInstance.connect()
+    // Kết nối thành công thì lấy ra Database theo tên và gán ngược nó lại vào biến trelloDatabaseInstance
+    trelloDatabaseInstance = mongoClientInstance.db(env.DATABASE_NAME)
+    console.log('Connected to MongoDB successfully!')
+  } catch (error) {
+    console.error('Failed to connect to MongoDB:', error.message)
+    throw error // Ném lỗi để chương trình biết và xử lý
+  }
 }
 
-// Dong ket noi toi DataBase khi can
+/**
+ * Hàm CLOSE_DB đóng kết nối tới Database
+ */
 export const CLOSE_DB = async () => {
   await mongoClientInstance.close()
 }
@@ -41,6 +47,6 @@ export const CLOSE_DB = async () => {
  * Đảm bảo hàm này chỉ được gọi sau khi CONNECT_DB đã thực thi
  */
 export const GET_DB = () => {
-  if (!trelloDatabaseInstance) throw new Error('Must connect to the database first!')
+  if (!trelloDatabaseInstance) throw new Error('Must connect to Database first!')
   return trelloDatabaseInstance
 }
