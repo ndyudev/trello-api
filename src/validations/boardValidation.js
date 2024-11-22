@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars */
+
 import Joi from 'joi'
 import { StatusCodes } from 'http-status-codes'
 import { json } from 'express'
-
+import ApiError from '~/utils/ApiError'
 
 const createNew = async (req, res, next) => {
 /**
@@ -27,9 +29,10 @@ const createNew = async (req, res, next) => {
     // Validate dữ liệu xong xuôi hộp lệ thì trỏ request đi tiếp sang Controller
     next()
   } catch (error) {
-    res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
-      errors: new Error(error).message
-    })
+    // console.log(error.message)
+    // const errorMessage = new Error(error).message
+    // res.status(StatusCodes.UNPROCESSABLE_ENTITY, errorMessage)
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message ))
   }
 }
 export const boardValidation = {
