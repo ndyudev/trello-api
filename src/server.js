@@ -4,6 +4,7 @@ import exitHook from 'async-exit-hook'
 import { CONNECT_DB, CLOSE_DB } from '~/config/mongodb'
 import { env } from '~/config/environment'
 import { APIs_v1 } from '~/routes/v1/index'
+import { errorHandlingMiddleware } from './middlewares/errorHandlingMiddleware'
 
 const START_SERVER = async () => {
   const app = express()
@@ -11,6 +12,9 @@ const START_SERVER = async () => {
   app.use(express.json())
   // Use API V1
   app.use('/v1', APIs_v1)
+
+  // Middlerware xử lý lỗi tập trung
+  app.use(errorHandlingMiddleware)
 
   app.listen(env.APP_PORT, env.APP_HOST, () => {
     console.log(`3.Hi ${env.AUTHOR} , Back-End Server MERN Stack is running successfully at Host: ${env.APP_HOST} and PORT: ${env.APP_PORT}`
@@ -39,4 +43,3 @@ const START_SERVER = async () => {
     process.exit(1) // Thoát tiến trình nếu xảy ra lỗi
   }
 })()
-
