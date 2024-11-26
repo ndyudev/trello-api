@@ -9,12 +9,11 @@ const createNew = async (reqBody) => {
       ...reqBody,
       slug: slugify(reqBody.title)
     }
-
+    // Gọi tới tầng Model để xử lý lưu bản ghi newBoard vào trong database
     const createdBoard = await boardModel.create(newBoard)
-    console.log(createdBoard)
-
+    // Lấy bản ghi mới được tạo ra
     const getNewBoard = await boardModel.findOneById(createdBoard.insertedId)
-
+    // Làm thêm các xử lý logic khác với các Collection khác tùy vào đặc thù dự án
     return getNewBoard
   } catch (error) { throw error }
 }
