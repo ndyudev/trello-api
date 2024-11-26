@@ -1,48 +1,32 @@
-import { StatusCodes } from 'http-status-codes'
-/**
- * Updated by trungquandev.com's author on Sep 27 2023
- * YouTube: https://youtube.com/@trungquandev
- * "A bit of fragrance clings to the hand that gives flowers!"
- * NOTE: (Muốn hiểu rõ hơn về code trong file này thì vui lòng xem video 54 trong bộ MERN Stack trên kênh Youtube của mình.)
-*/
+import Joi from 'joi'
+import { GET_DB } from '~/config/mongodb'
+import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
+// Define collection ( Name & Scheme )
 
-/**
- * Định nghĩa riêng một Class ApiError kế thừa class Error sẵn (điều này cần thiết và là Best Practice vì class Error nó là class built-in sẵn)
- */
-class ApiError extends Error {
-  constructor(statusCode, message) {
-    // Gọi tới hàm khởi tạo của class Error (class cha) để còn dùng this (kiến thức OOP lập trình hướng đối tượng căn bản)
-    // Thằng cha (Error) có property message rồi nên gọi nó luôn trong super cho gọn
-    super(message)
+const BOARD_COLLECTION_NAME = 'boards'
+const BOARD_COLLECTION_SCHEMA = Joi.object({
+  title: Joi.string().required().min(3).max(50).trim().strict(),
+  slug: Joi.string().required().min(3).trim().strict(),
+  description: Joi.string().required().min(3).max(256).trim().strict(),
+  columnOrderIds: Joi.array().items(
+    Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+  ).default([]),
 
-    // Tên của cái custom Error này, nếu không set thì mặc định nó sẽ kế thừa là "Error"
-    this.name = 'ApiError'
+  createdAt: Joi.date().timestamp('javascript').default(Date.now),
+  updateAt: Joi.date().timestamp('javascript').default(null),
+  _destroy: Joi.boolean().default(false)
+})
 
-    // Gán thêm http status code của chúng ta ở đây
-    this.statusCode = statusCode
-
-    // Ghi lại Stack Trace (dấu vết ngăn xếp) để thuận tiện cho việc debug
-    Error.captureStackTrace(this, this.constructor)
-  }
-}
-
-export default ApiError
-const createNew = async (req, res, next) => {
+const createNew = async (data) => {
   try {
-    // console.log('req.body:', req.body)
-    // console.log('req.query:', req.query)
-    // console.log('req.params:', req.params)
-    // console.log('req.files:', req.files)
-    // console.log('req.cookies:', req.cookies)
-    // console.log('req.jwtDecoded:', req.jwtDecoded)
-    // Điều hướng dữ liệu sang tầng Servic
-
-    // throw new ApiError(StatusCodes.BAD_GATEWAY, 'ndyudev test error')
-    // Có kết quả thì trả về phía Client
-    res.status(StatusCodes.CREATED).json({ message: 'POST from Controller : API create new board' })
-  } catch (error) { next(error) }
+    const createdBoard = await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(data)
+    return createdBoard
+    // return await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(data)
+  } catch (error) { throw new Error(error) }
 }
 
-export const boardController = {
+export const boardModel = {
+  BOARD_COLLECTION_NAME,
+  BOARD_COLLECTION_SCHEMA,
   createNew
 }
