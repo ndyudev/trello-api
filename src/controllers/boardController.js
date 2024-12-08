@@ -1,7 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
-
 // import { boardController } from '~/controllers/boardController'
-import { boardService } from '../services/boardService'
+import { boardService } from '~/services/boardService'
 
 
 class ApiError extends Error {
@@ -22,16 +21,26 @@ class ApiError extends Error {
 }
 
 export default ApiError
+
 const createNew = async (req, res, next) => {
 
   try {
 
     const createdBoard = await boardService.createNew(req.body)
     return res.status(StatusCodes.CREATED).json(createdBoard)
-    // Có kết qua thì trả về phía Client
+  } catch (error) { next(error) }
+}
+
+const getDetails = async (req, res, next) => {
+  try {
+    const boardId = req.params.id
+    // Sau này ở khóa MERN Stack Advance nâng cao học trực tiếp thì sẽ có thêm userId nữa đẻ chỉ lấy board thuộc về user đó thôi chẳng hạn
+    const board = await boardService.getDetails(boardId)
+    res.status(StatusCodes.OK).json(board)
   } catch (error) { next(error) }
 }
 
 export const boardController = {
-  createNew
+  createNew,
+  getDetails
 }
