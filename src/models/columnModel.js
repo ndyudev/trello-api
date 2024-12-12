@@ -25,8 +25,13 @@ const validateBeforeCreate = async (data) => {
 const createNew = async (data) => {
   try {
     const validData = await validateBeforeCreate(data)
-    const createdBoard = await GET_DB().collection(COLUMN_COLLECTION_NAME).insertOne(validData)
-    return createdBoard
+    // Biến đổi 1 số dữ liệu liên quan đến ID chuẩn chỉnh
+    const newColumnToAdd = {
+      ...validData,
+      boardId: new ObjectId(validData.boardId)
+    }
+    const createdColumn = await GET_DB().collection(COLUMN_COLLECTION_NAME).insertOne(newColumnToAdd)
+    return createdColumn
     // return await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(data)
   } catch (error) { throw new Error(error) }
 }
@@ -39,8 +44,23 @@ const findOneById = async (id) => {
   } catch (error) { throw new Error(error) }
 }
 
+// Nhiệm vụ của funtion này là cập nhập push 1 cái giá trị cardId vào cuối mảng cardOrderIds
+const pushCardOrderIds = async (card) => {
+  try {
+    const result = await GET_DB().collection(COLUMN_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(card.columnId) },
+      { $push: { cardOrderIds: new ObjectId(card._id) } },
+      { returnDocument: 'after' }
+    )
+
+    return result.value
+  } catch (error) {throw new Error(error) }
+}
+
 export const columnModel = {
   COLUMN_COLLECTION_SCHEMA,
+  COLUMN_COLLECTION_NAME,
   createNew,
-  findOneById
+  findOneById,
+  pushCardOrderIds
 }
