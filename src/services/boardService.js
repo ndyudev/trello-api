@@ -1,5 +1,5 @@
 import { slugify } from '~/utils/formatters'
-import { boardModel } from '../models/boardModel'
+import { boardModel } from '~/models/boardModel'
 import ApiError from '~/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
 import { cloneDeep } from 'lodash'
