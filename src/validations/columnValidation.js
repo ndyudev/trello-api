@@ -19,6 +19,6 @@ const createNew = async (req, res, next) => {
     next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message ))
   }
 }
-export const boardValidation = {
+export const columnValidation = {
   createNew
 }
