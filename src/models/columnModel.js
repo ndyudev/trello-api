@@ -18,6 +18,10 @@ const COLUMN_COLLECTION_SCHEMA = Joi.object({
   updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false)
 })
+
+// Chỉ định ra những Fields mà chúng ta không muốn cho phép cập nhập trong hàm update()
+const INVALID_UPDATE_FIELDS = ['_id', 'updateAt', 'boardId']
+
 const validateBeforeCreate = async (data) => {
   return await COLUMN_COLLECTION_SCHEMA.validateAsync(data, { abortEarly: false })
 }
@@ -57,10 +61,30 @@ const pushCardOrderIds = async (card) => {
   } catch (error) {throw new Error(error) }
 }
 
+const update = async (columnId, updateData) => {
+  try {
+    // Lọc những cái Fields mà không cho phép cập nhập vớ vẫn
+    Object.keys(updateData).forEach(fieldName => {
+      if (INVALID_UPDATE_FIELDS.includes(fieldName)) {
+        delete updateData[fieldName]
+      }
+    })
+
+    const result = await GET_DB().collection(COLUMN_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(columnId) },
+      { $set: updateData },
+      { returnDocument: 'after' } // Sẽ trả về khi cập nhập
+    )
+
+    return result
+  } catch (error) {throw new Error(error) }
+}
+
 export const columnModel = {
   COLUMN_COLLECTION_SCHEMA,
   COLUMN_COLLECTION_NAME,
   createNew,
   findOneById,
-  pushCardOrderIds
+  pushCardOrderIds,
+  update
 }
