@@ -21,10 +21,17 @@ const START_SERVER = async () => {
   // Middlerware xử lý lỗi tập trung
   app.use(errorHandlingMiddleware)
 
-  app.listen(env.APP_PORT, env.APP_HOST, () => {
-    console.log(`3.Hi ${env.AUTHOR} , Back-End Server MERN Stack is running successfully at Host: ${env.APP_HOST} and PORT: ${env.APP_PORT}`
-    )
-  })
+  // Connect Database & Deploy ( Môi trường Production ( hiện tại ) là đang support Render.com )
+  if (env.BUILD_MODE === 'production') {
+    app.listen(process.env.PORT, () => {
+      console.log(`3. Production: Hi ${env.AUTHOR} , Back-End Server MERN Stack is running successfully at PORT: ${process.env.PORT}`)
+    })
+  } else {
+    // Connect Database & Deploy ( Môi trường Development )
+    app.listen(env.LOCAL_DEV_APP_PORT, env.LOCAL_DEV_APP_HOST, () => {
+      console.log(`3. Local DEV: Hi ${env.AUTHOR} , Back-End Server MERN Stack is running successfully at Host: ${env.LOCAL_DEV_APP_HOST} and PORT: ${env.LOCAL_DEV_APP_PORT}`)
+    })
+  }
 
   // Hook để đóng database khi thoát
   exitHook(() => {
