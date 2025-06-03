@@ -1,82 +1,112 @@
-# Trello with MERN Stack (nDyu Dev)
+# Trello Web Backend
 
-A Trello-inspired project management tool built with the MERN Stack (MongoDB, Express, React, and Node.js). This application provides a responsive, user-friendly interface for managing boards, lists, and cards, enabling teams to stay organized and productive.
+## Giới thiệu
 
-## Features
+**Trello Web Backend** là phần backend của ứng dụng quản lý dự án Trello Web, được xây dựng bằng Node.js và Express. Backend này cung cấp API cho phép người dùng tương tác với cơ sở dữ liệu và thực hiện các thao tác quản lý bảng, danh sách và thẻ công việc.
 
-- **User Authentication**: Secure login and signup functionality with JSON Web Tokens (JWT).
-- **Board Management**: Create and customize multiple boards for different projects.
-- **Task Lists & Cards**: Add lists to boards, and create draggable cards within each list for task management.
-- **Real-Time Collaboration**: Instant updates across multiple users using web sockets.
-- **Search & Filter**: Quickly find boards, lists, or specific tasks.
-- **Activity Tracking**: View detailed logs of changes to track task progress.
-- **Responsive Design**: Optimized for both desktop and mobile views.
+## Tính năng
 
-## Tech Stack
+- **Xác thực người dùng**: Đăng nhập và đăng ký với JSON Web Tokens (JWT).
+- **Quản lý bảng**: Tạo, đọc, cập nhật và xóa bảng.
+- **Quản lý danh sách**: Tạo, đọc, cập nhật và xóa danh sách trong bảng.
+- **Quản lý thẻ công việc**: Tạo, đọc, cập nhật và xóa thẻ công việc trong danh sách.
+- **Theo dõi hoạt động**: Ghi lại các hoạt động của người dùng để dễ dàng theo dõi.
 
-- **Frontend**: React, Vite, and CSS modules for styling, using [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) for fast refresh with SWC.
-- **Backend**: Node.js and Express for REST API development.
-- **Database**: MongoDB to store user, board, and task data.
-- **Real-Time Communication**: Socket.io for instant updates and real-time collaboration.
-- **Authentication**: JWT (JSON Web Token) for secure user sessions.
+## Công nghệ sử dụng
 
-## Getting Started
+- **Ngôn ngữ lập trình**: Node.js
+- **Framework**: Express
+- **Cơ sở dữ liệu**: MongoDB
+- **Xác thực**: JSON Web Tokens (JWT)
+- **WebSocket**: Socket.io cho cập nhật thời gian thực
+
+## Cài đặt
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) v14 or above
-- [MongoDB](https://www.mongodb.com/try/download/community) (or MongoDB Atlas for a cloud-hosted database)
 
-### Installation
+- Node.js (>= 14.x)
+- MongoDB (cài đặt cục bộ hoặc sử dụng MongoDB Atlas)
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/ndyudev/trello-web.git
-   cd trello-clone-mern
+### Bước 1: Clone repository
 
+```bash
+git clone https://github.com/ndyudev/trello-web-backend.git
+cd trello-web-backend
+```
 
+### Bước 2: Cài đặt các phụ thuộc
 
-Install dependencies for both client and server:
-
-bash
-Sao chép mã
-# Install client dependencies
-cd client
+```bash
 npm install
+```
 
-# Install server dependencies
-cd ../server
-npm install
-Environment Variables
-Create a .env file in the server folder with the following variables:
+### Bước 3: Cấu hình biến môi trường
 
-plaintext
-Sao chép mã
-MONGO_URI=<your_mongodb_uri>
-JWT_SECRET=<your_jwt_secret>
-PORT=5000
-Start the application:
+Tạo file `.env` trong thư mục gốc và thêm các biến sau:
 
-Backend:
-bash
-Sao chép mã
-cd server
+```
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+```
+
+### Bước 4: Chạy ứng dụng
+
+```bash
 npm start
-Frontend:
-bash
-Sao chép mã
-cd client
-npm run dev
-Access the application: Visit http://localhost:3000 to view the app.
+```
 
-Usage
-Sign up and log in to create a new workspace.
-Start creating boards, add lists to them, and populate these lists with cards.
-Drag and drop cards to reorder tasks within and across lists.
-Collaborate in real-time by inviting others to your boards.
-Screenshots
-<!-- Add screenshots or GIFs of your application here -->
-Contributing
-Contributions are welcome! Please fork the repository and open a pull request to suggest changes.
+API sẽ chạy trên `http://localhost:5000`.
 
-License
-This project is open-source and available under the MIT License.
+## API Reference
+
+### Xác thực
+
+- **POST /api/auth/register**: Đăng ký người dùng mới.
+- **POST /api/auth/login**: Đăng nhập và lấy token.
+
+### Quản lý bảng
+
+- **GET /api/boards**: Lấy danh sách bảng.
+- **POST /api/boards**: Tạo bảng mới.
+- **PUT /api/boards/:id**: Cập nhật bảng.
+- **DELETE /api/boards/:id**: Xóa bảng.
+
+### Quản lý danh sách
+
+- **GET /api/boards/:boardId/lists**: Lấy danh sách trong bảng.
+- **POST /api/boards/:boardId/lists**: Tạo danh sách mới.
+- **PUT /api/lists/:id**: Cập nhật danh sách.
+- **DELETE /api/lists/:id**: Xóa danh sách.
+
+### Quản lý thẻ công việc
+
+- **GET /api/lists/:listId/cards**: Lấy thẻ công việc trong danh sách.
+- **POST /api/lists/:listId/cards**: Tạo thẻ công việc mới.
+- **PUT /api/cards/:id**: Cập nhật thẻ công việc.
+- **DELETE /api/cards/:id**: Xóa thẻ công việc.
+
+## Cấu trúc dự án
+
+```
+trello-web-backend/
+├── config/
+├── controllers/
+├── models/
+├── routes/
+├── middleware/
+├── .env
+├── package.json
+└── server.js
+```
+
+## Đóng góp
+
+Chúng tôi hoan nghênh mọi đóng góp từ cộng đồng. Vui lòng gửi pull request hoặc mở issue nếu bạn tìm thấy lỗi hoặc có ý tưởng cải tiến.
+
+## Giấy phép
+
+Dự án này được cấp phép theo Giấy phép MIT. Vui lòng xem tệp [LICENSE](LICENSE) để biết thêm chi tiết.
+
+## Liên hệ
+
+Nếu bạn có bất kỳ câu hỏi nào, hãy liên hệ với chúng tôi qua email: chauunhatduyyot@gmail.com.
